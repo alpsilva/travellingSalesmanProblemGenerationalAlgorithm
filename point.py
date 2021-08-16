@@ -32,6 +32,9 @@ class Tour:
             # The total distance of the tour will be used as the objective function to determine good and bad routes
             self.total_distance = total_distance
 
+        def __lt__(self, other):
+            return self.total_distance < other.total_distance
+        
         def printTour(self):
             print("Route of the Tour: ")
             for point in self.points:
