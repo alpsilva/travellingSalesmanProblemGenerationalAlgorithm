@@ -1,4 +1,5 @@
 #%%
+import math
 import random
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,7 +46,7 @@ for g in range(num_generations):
     tops.append(top_5_avg)
 
     # Selecting a parcel of the individuals that will be used to produce the next generation
-    num_parents = num_individuals_per_generation/10
+    num_parents = math.floor(num_individuals_per_generation/10)
     parents = []
     for i in range(num_parents):
         selected = roulette_wheel(population)
