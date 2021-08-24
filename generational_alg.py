@@ -70,8 +70,6 @@ def crossover(parent1, parent2):
     p1 = parent1.points
     p2 = parent2.points
     offspring_points = []
-    p1_segment = []
-    p2_segment = []
     
     # Pick a sublist of parent 1 points, and combines it with the rest of parent 2
     gene_a = int(random.random() * len(p1))
@@ -80,12 +78,44 @@ def crossover(parent1, parent2):
     start_gene = min(gene_a, gene_b)
     end_gene = max(gene_a, gene_b)
 
-    for i in range(start_gene, end_gene):
-        p1_segment.append(p1[i])
-        
-    p2_segment = [item for item in p2 if item not in p1_segment]
+    p = Point(-1, -1.1, -1.1)
+    for i in range(len(p1)):
+        if i < start_gene:
+            offspring_points.append(p)
+        elif i > end_gene:
+            offspring_points.append(p)
+        else:
+            offspring_points.append(p1[i])
+            
+    p2_index = 0
+    o_index = 0
 
-    offspring_points = p1_segment + p2_segment
+    while (o_index < len(offspring_points)) and (p2_index < len(p2)):
+        #print ("tam: ", len(p2), "index: ", p2_index)
+        next_point = p2[p2_index]
+        if next_point not in offspring_points:
+            if offspring_points[o_index] == p:
+                offspring_points[o_index] = next_point
+                p2_index = p2_index + 1
+                o_index = o_index + 1
+            else:
+                o_index = o_index + 1
+        else:
+            p2_index = p2_index + 1
+
+    if offspring_points[0] != offspring_points[-1]:
+        if (start_gene == 0):
+            offspring_points[-1] == offspring_points[0]
+        else:
+            # can only occur when end_gene == last position
+            offspring_points[0] == offspring_points[-1]
+
+    #for i in range(start_gene, end_gene):
+    #    p1_segment.append(p1[i])
+    #    
+    #p2_segment = [item for item in p2 if item not in p1_segment]
+    #
+    #offspring_points = p1_segment + p2_segment
     offspring = Tour(offspring_points)
     return offspring
 
