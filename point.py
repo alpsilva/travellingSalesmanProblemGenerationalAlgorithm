@@ -6,6 +6,9 @@ class Point:
         self.x = x
         self.y = y
 
+    def __eq__(self, other) -> bool:
+        return self.id == other.id
+    
     def printPoint(self):
         print(self.id, self.x, self.y)
 
