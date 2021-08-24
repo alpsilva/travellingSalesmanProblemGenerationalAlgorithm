@@ -17,7 +17,7 @@ for point in points:
     shuffled_points.append(point)
 
 # Defines how many generations the algorithm will produce before stopping
-num_generations = 1000
+num_generations = 100
 # Defines how many individuals each generation will have
 num_individuals_per_generation = 1000
 
@@ -46,9 +46,18 @@ for g in range(num_generations):
     tops.append(top_5_avg)
 
     # Selecting a parcel of the individuals that will be used to produce the next generation
-    num_parents = math.floor(num_individuals_per_generation/20)
+    num_parents = math.floor(num_individuals_per_generation/10)
     parents = []
-    for i in range(num_parents):
+
+    # elitism
+    # will take ~25% of parents vacancy and give it to the best individuals
+    elitism_quote = num_parents/4
+    sorted_population = sorted(population)
+    for i in range(math.floor(elitism_quote)):
+        parents.append(sorted_population[i])
+        population.remove(sorted_population[i])
+
+    for i in range(math.floor(elitism_quote), num_parents):
         selected = roulette_wheel(population)
         # remove the selected individual from the general population and adds it to the parent pool
         population.remove(selected)
