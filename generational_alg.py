@@ -31,10 +31,15 @@ def roulette_wheel(tours):
     # failsafe
     return selected
 
-def generateChild(shuffled_points, parent):
+def generateChild(current_generation, total_generations, shuffled_points, parent1, parent2):
     
-
-    crossover_chance = 75 # Chance of crossover happening
+    # Chance of crossover happening
+    if current_generation < total_generations / 2:
+        crossover_chance = 60
+    elif current_generation < total_generations / 4:
+        crossover_chance = 20
+    else: crossover_chance = 80
+        
     will_crossover = False
     roll = random.randrange(100)
     if roll < crossover_chance:
@@ -43,46 +48,52 @@ def generateChild(shuffled_points, parent):
     child = None
 
     if (will_crossover):
+       child = crossover(parent1, parent2)
+    else:
+        # child will be random
         random.shuffle(shuffled_points)
         child = Tour(shuffled_points)
-        # in this crossover, we determine some points on the child that will have the exact same value as the parent
-        # exchanging when necessary
-
-        # number of afflicted points
-        n = random.randrange(len(parent.points))
-        for N in range(n):
-            # select a random point from the father
-            random_index = random.randrange(len(parent.points))
-            selected_point = parent.points[random_index]
-            for i in range(len(child.points)):
-                if child.points[i].id == selected_point.id:
-                    # Exchange se we do not duplicate visits to a point
-                    child.points[i] = child.points[random_index]
-                    child.points[random_index] = selected_point
-
-                    # we have to make sure the tour begins and ends on the same city
-                    if (random_index == 0 or random_index == len(child.points)-1):
-                        child.points[0] = selected_point
-                        child.points[len(child.points)-1] = selected_point
-    else:
-        # child will be equal to the parent
-        child = Tour(parent.points)
 
     # theres a small chance the child can mutate
-    mutation_chance = 10 # Chance of mutation happening
+    mutation_chance = 20 # Chance of mutation happening
     will_mutate = False
     roll = random.randrange(100)
     if roll < mutation_chance:
         will_mutate = True
 
     if will_mutate:
-        # this mutation switchs two random points (excluding start and end points to ease implementation)
-        i1 = random.randrange(1, len(child.points)-1)
-        i2 = random.randrange(1, len(child.points)-1)
-        aux = child.points[i1]
-        child.points[i1] = child.points[i2]
-        child.points[i2] = aux
+        child = mutate(child)
 
     return child
     
+def crossover(parent1, parent2):
+    p1 = parent1.points
+    p2 = parent2.points
+    offspring_points = []
+    p1_segment = []
+    p2_segment = []
+    
+    # Pick a sublist of parent 1 points, and combines it with the rest of parent 2
+    gene_a = int(random.random() * len(p1))
+    gene_b = int(random.random() * len(p1))
 
+    start_gene = min(gene_a, gene_b)
+    end_gene = max(gene_a, gene_b)
+
+    for i in range(start_gene, end_gene):
+        p1_segment.append(p1[i])
+        
+    p2_segment = [item for item in p2 if item not in p1_segment]
+
+    offspring_points = p1_segment + p2_segment
+    offspring = Tour(offspring_points)
+    return offspring
+
+def mutate(individual):
+    # this mutation switchs two random points (excluding start and end points to ease implementation)
+    i1 = random.randrange(1, len(individual.points)-1)
+    i2 = random.randrange(1, len(individual.points)-1)
+    aux = individual.points[i1]
+    individual.points[i1] = individual.points[i2]
+    individual.points[i2] = aux
+    return individual

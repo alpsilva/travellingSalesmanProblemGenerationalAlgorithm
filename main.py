@@ -17,9 +17,9 @@ for point in points:
     shuffled_points.append(point)
 
 # Defines how many generations the algorithm will produce before stopping
-num_generations = 100
+num_generations = 1000
 # Defines how many individuals each generation will have
-num_individuals_per_generation = 100
+num_individuals_per_generation = 1000
 
 # array that will be used to plot graphics
 tops = []
@@ -46,7 +46,7 @@ for g in range(num_generations):
     tops.append(top_5_avg)
 
     # Selecting a parcel of the individuals that will be used to produce the next generation
-    num_parents = math.floor(num_individuals_per_generation/10)
+    num_parents = math.floor(num_individuals_per_generation/20)
     parents = []
     for i in range(num_parents):
         selected = roulette_wheel(population)
@@ -56,13 +56,13 @@ for g in range(num_generations):
     
     population = []
     for p in range (num_individuals_per_generation):
-        parent_index = random.randrange(num_parents)
-        parent = parents[parent_index]
-        child = generateChild(shuffled_points, parent)
+        parent1_index = random.randrange(num_parents)
+        parent2_index = random.randrange(num_parents)
+        parent1 = parents[parent1_index]
+        parent2 = parents[parent2_index]
+        child = generateChild(g, num_generations, shuffled_points, parent1, parent2)
         population.append(child)
-# %%
 
-#%%
 print("")
 # The generations have developed and we should be left with some individuals that are generally better at the problem
 # So now we order the population by the smallest tota_distance and print the top 5 candidates
@@ -84,7 +84,7 @@ for tour in sorted_population:
 avg = avg / len(sorted_population)
 print("Average total distance of the last generation: ", avg)
 
-plt.stem(np.arange(0, num_generations, 1), tops)
+plt.plot(np.arange(0, num_generations, 1), tops)
 
 plt.legend('Average top 5 distances in all generations')
 plt.show()
